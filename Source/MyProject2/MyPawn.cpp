@@ -69,7 +69,18 @@ void AMyPawn::BeginPlay()
 // Called every frame
 void AMyPawn::Tick(float DeltaTime)
 {
-    Super::Tick(DeltaTime);
+    {
+        Super::Tick(DeltaTime);
+        // Handle movement based on our "MoveX" and "MoveY" axes
+        {
+            if (!CurrentVelocity.IsZero())
+            {
+                FVector NewLocation = GetActorLocation() + (CurrentVelocity * DeltaTime);
+                SetActorLocation(NewLocation);
+            }
+        }
+
+    }
 
 }
 
@@ -79,9 +90,10 @@ void AMyPawn::SetupPlayerInputComponent(class UInputComponent* InInputComponent)
     Super::SetupPlayerInputComponent(InInputComponent);
 
     InInputComponent->BindAction("ParticleToggle", IE_Pressed, this, &AMyPawn::ParticleToggle);
+    InInputComponent->BindAction("Acceleration", IE_Pressed, this, &AMyPawn::Acceleration);
+    InInputComponent->BindAction("Acceleration", IE_Released, this, &AMyPawn::Decceleration);
 
     InInputComponent->BindAxis("MoveForward", this, &AMyPawn::MoveForward);
-    InInputComponent->BindAxis("MoveBoost", this, &AMyPawn::MoveBoost);
     InInputComponent->BindAxis("MoveRight", this, &AMyPawn::MoveRight);
     InInputComponent->BindAxis("Turn", this, &AMyPawn::Turn);
 }
@@ -91,11 +103,19 @@ UPawnMovementComponent* AMyPawn::GetMovementComponent() const
     return OurMovementComponent;
 }
 
-void AMyPawn::MoveBoost(float AxisValue)
+
+void AMyPawn::Acceleration()
 {
     if (OurMovementComponent && (OurMovementComponent->UpdatedComponent == RootComponent))
     {
-        OurMovementComponent->AddInputVector(GetActorForwardVector() * AxisValue);
+        OurMovementComponent->speed = 10000;
+    }
+}
+void AMyPawn::Decceleration()
+{
+    if (OurMovementComponent && (OurMovementComponent->UpdatedComponent == RootComponent))
+    {
+        OurMovementComponent->speed = 1000;
     }
 }
 
@@ -123,7 +143,7 @@ void AMyPawn::Turn(float AxisValue)
 }
 
 void AMyPawn::ParticleToggle()
-{
+{   
     if (OurParticleSystem && OurParticleSystem->Template)
     {
         OurParticleSystem->ToggleActive();

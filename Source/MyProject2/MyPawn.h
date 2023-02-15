@@ -35,9 +35,11 @@ public:
         USceneComponent* OurVisibleComponent;
 
         virtual UPawnMovementComponent* GetMovementComponent() const override;
+        FVector CurrentVelocity;
 
-    void MoveForward(float AxisValue);
-    void MoveBoost(float AxisValue);
+        void Acceleration();
+        void Decceleration();
+        void MoveForward(float AxisValue);
     void MoveRight(float AxisValue);
     void Turn(float AxisValue);
     void ParticleToggle();

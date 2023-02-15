@@ -15,5 +15,6 @@ class RACING_API UCollidingPawnMovementComponent : public UPawnMovementComponent
     GENERATED_BODY()
 
 public:
+    int speed = 1000;
     virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };
